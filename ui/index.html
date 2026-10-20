@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CM FrameKit</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 标题栏 -->
+    <header class="titlebar">
+      <div class="titlebar-drag">
+        <img class="titlebar-icon" src="logo.png" alt="logo" width="30" height="30">
+        <span class="titlebar-title">CM FrameKit</span>
+        <span class="titlebar-accel" id="titlebar-accel" title="编码加速"></span>
+      </div>
+      <div class="titlebar-controls">
+        <button class="titlebar-btn-settings" id="btn-help" title="帮助与说明">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/>
+          </svg>
+          <span>帮助</span>
+        </button>
+        <button class="titlebar-btn-settings" id="btn-settings" title="设置">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+          <span>设置</span>
+        </button>
+        <button class="titlebar-btn" id="btn-minimize" title="最小化">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M6 11h12v2H6z"/>
+          </svg>
+        </button>
+        <button class="titlebar-btn" id="btn-maximize" title="最大化">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+            <rect x="5" y="5" width="14" height="14" rx="1.5"/>
+          </svg>
+        </button>
+        <button class="titlebar-btn titlebar-btn-close" id="btn-close" title="关闭">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main">
+      <!-- 模式切换 -->
+      <div class="mode-tabs">
+        <button class="mode-tab active" id="tab-single" data-mode="single">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
+          单文件精修
+        </button>
+        <button class="mode-tab" id="tab-batch" data-mode="batch">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+          批量处理
+        </button>
+      </div>
+
+      <div id="view-single">
+      <!-- 文件选择区 -->
+      <section class="file-section initial-state" id="file-section">
+        <div class="file-drop" id="file-drop">
+          <div class="file-drop-content" id="file-drop-content">
+            <svg class="file-icon" viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+              <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+            </svg>
+            <p>拖拽视频文件到此处</p>
+            <button id="btn-select-file" class="btn-pick">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+              点击选择
+            </button>
+            <p class="file-hint">支持 mp4, mkv, avi, mov, webm, flv, wmv, ts, m4v</p>
+            <div class="recent-files" id="recent-files"></div>
+          </div>
+          <div class="file-info hidden" id="file-info">
+            <svg class="file-icon-small" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+            </svg>
+            <div class="file-details">
+              <div class="file-name" id="file-name"></div>
+              <div class="file-meta" id="file-meta"></div>
+            </div>
+            <button id="btn-change-file" class="btn btn-sm">更换文件</button>
+          </div>
+          <div class="compat-panel" id="compat-panel"></div>
+        </div>
+      </section>
+
+      <!-- 任务区 -->
+      <section class="tasks-section hidden" id="tasks-section">
+        <!-- 左侧：截帧模块 -->
+        <div class="panel-left">
+          <div class="panel panel-frame">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <svg class="panel-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                </svg>
+                <h3>截帧</h3>
+              </div>
+            </div>
+            <div class="frame-preview-container">
+              <div class="frame-preview" id="frame-preview">
+                <div class="frame-preview-placeholder" id="frame-placeholder">
+                  <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor">
+                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                  </svg>
+                  <span>加载视频后显示预览</span>
+                </div>
+                <img id="frame-preview-img" class="hidden" alt="帧预览">
+                <video id="frame-preview-video" class="hidden" muted></video>
+              </div>
+            </div>
+            <div class="frame-timeline" id="frame-timeline">
+              <div class="timeline-track" id="timeline-track">
+                <div class="timeline-progress" id="timeline-progress"></div>
+                <div class="timeline-thumb" id="timeline-thumb"></div>
+              </div>
+              <div class="timeline-time">
+                <span id="current-time">00:00:00.000</span>
+                <span>/</span>
+                <span id="total-duration">00:00:00</span>
+              </div>
+            </div>
+            <div class="frame-actions">
+              <button class="btn" id="btn-capture-frame" disabled>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+                </svg>
+                截帧
+              </button>
+              <button class="btn" id="btn-export-frames" disabled>
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                导出
+              </button>
+            </div>
+            <div class="frame-list-container" id="frame-list-container">
+              <div class="frame-list-header">
+                <span>已截帧 (<span id="frame-count">0</span>)</span>
+                <button class="btn-clear" id="btn-clear-frames" title="清空已截帧">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                  清空
+                </button>
+              </div>
+              <div class="frame-list" id="frame-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 中间：批量任务模块 -->
+        <div class="panel-center">
+          <!-- 音频提取 -->
+          <div class="panel panel-task">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <svg class="panel-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
+                <h3>音频提取</h3>
+              </div>
+              <label class="checkbox-label">
+                <input type="checkbox" id="audio-enable" checked>
+                <span class="checkbox-custom"></span>
+                <span>启用</span>
+              </label>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>编码格式</label>
+                <select id="audio-codec">
+                  <option value="aac" selected>AAC (.m4a)</option>
+                  <option value="mp3">MP3</option>
+                  <option value="opus">Opus (.ogg)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>码率</label>
+                <select id="audio-bitrate">
+                  <option value="32k" selected>32 kbps</option>
+                  <option value="64k">64 kbps</option>
+                  <option value="96k">96 kbps</option>
+                  <option value="128k">128 kbps</option>
+                  <option value="192k">192 kbps</option>
+                </select>
+              </div>
+            </div>
+            <!-- 多音轨：探测到多于一条音轨时显示，勾选要分别导出的音轨 -->
+            <div class="track-block hidden" id="audio-tracks-block">
+              <div class="track-head">
+                <label>音轨</label>
+                <label class="checkbox-label"><input type="checkbox" id="audio-tracks-all" checked><span class="checkbox-custom"></span><span>全选</span></label>
+              </div>
+              <div class="track-list" id="audio-tracks"></div>
+            </div>
+            <div class="form-hint" id="audio-hint">AAC 128kbps 音质好，所有设备都能播放</div>
+          </div>
+
+          <!-- 雪碧图生成 -->
+          <div class="panel panel-task">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <svg class="panel-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/>
+                </svg>
+                <h3>雪碧图生成</h3>
+              </div>
+              <label class="checkbox-label">
+                <input type="checkbox" id="sprite-enable" checked>
+                <span class="checkbox-custom"></span>
+                <span>启用</span>
+              </label>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>缩略图宽度 (px)</label>
+                <input type="number" id="sprite-width" value="160" min="50" max="640">
+              </div>
+              <div class="form-group">
+                <label>每行列数</label>
+                <input type="number" id="sprite-cols" value="10" min="1" max="20">
+              </div>
+              <div class="form-group form-group-full">
+                <label>截取间隔 (秒) <span class="label-value" id="sprite-interval-label">自动</span></label>
+                <input type="range" id="sprite-interval" min="2" max="60" value="10">
+              </div>
+            </div>
+            <div class="form-hint" id="sprite-hint">间隔根据视频时长自动计算，WebP 格式画质 75</div>
+          </div>
+
+          <!-- 预览视频 -->
+          <div class="panel panel-task">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <svg class="panel-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                <h3>预览视频</h3>
+              </div>
+              <label class="checkbox-label">
+                <input type="checkbox" id="preview-enable" checked>
+                <span class="checkbox-custom"></span>
+                <span>启用</span>
+              </label>
+            </div>
+            <div class="form-grid">
+              <!-- 输出格式置顶：决定后续可用选项 -->
+              <div class="form-group form-group-full">
+                <label>输出格式</label>
+                <select id="preview-format">
+                  <option value="mp4" selected>MP4 视频</option>
+                  <option value="gif">GIF 动图</option>
+                  <option value="webp">WebP 动图</option>
+                </select>
+                <div class="field-hint" id="preview-format-hint"></div>
+              </div>
+
+              <div class="form-group" id="pv-group-codec">
+                <label>编码</label>
+                <select id="preview-codec">
+                  <option value="h264" selected>H.264 (软件)</option>
+                  <option value="h265">H.265 (软件)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>输出宽度 (px)</label>
+                <input type="number" id="preview-width" value="640" min="160" max="1920">
+              </div>
+              <div class="form-group">
+                <label>帧率 (fps)</label>
+                <select id="preview-fps">
+                  <option value="0" selected>原始帧率</option>
+                </select>
+                <div class="field-hint" id="preview-fps-hint"></div>
+              </div>
+              <div class="form-group" id="pv-group-gifcolors">
+                <label>颜色数量</label>
+                <select id="preview-gif-colors">
+                  <option value="256" selected>256 色（最佳）</option>
+                  <option value="128">128 色</option>
+                  <option value="64">64 色（更小）</option>
+                  <option value="32">32 色（最小）</option>
+                </select>
+              </div>
+              <div class="form-group" id="pv-group-webpquality">
+                <label>画质 <span class="label-value" id="preview-webp-quality-label">70</span></label>
+                <input type="range" id="preview-webp-quality" min="1" max="100" value="70">
+              </div>
+              <div class="form-group">
+                <label>片段数量</label>
+                <input type="number" id="preview-clips" value="10" min="1" max="20">
+              </div>
+              <div class="form-group">
+                <label>每段时长 (秒)</label>
+                <input type="number" id="preview-clip-duration" value="1" min="0.5" max="10" step="0.5">
+              </div>
+              <div class="form-group">
+                <label>排序</label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="preview-random" checked>
+                  <span class="checkbox-custom"></span>
+                  <span>随机排序</span>
+                </label>
+              </div>
+              <div class="form-group" id="pv-group-audio">
+                <label>音频</label>
+                <label class="checkbox-label">
+                  <input type="checkbox" id="preview-audio">
+                  <span class="checkbox-custom"></span>
+                  <span>包含音频轨道</span>
+                </label>
+              </div>
+            </div>
+            <div class="form-hint" id="preview-hint">H.264 + AAC 全平台兼容，H.265 体积更小但依赖硬件解码</div>
+          </div>
+
+          <!-- 执行按钮 -->
+          <div class="actions">
+            <button class="btn btn-primary" id="btn-run-tasks">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+              开始执行选中任务
+            </button>
+          </div>
+        </div>
+
+        <!-- 右侧：日志模块（宽屏时显示） -->
+        <div class="panel-right" id="panel-right">
+          <div class="panel panel-log">
+            <div class="log-header">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 10H6v-2h8v2zm4-4H6v-2h12v2z"/>
+              </svg>
+              <span>任务队列</span>
+            </div>
+            <div class="log-list" id="log-list-side">
+              <div class="log-item">
+                <span class="log-task">系统</span>
+                <span class="log-msg">等待任务开始...</span>
+                <span class="log-status idle"><span class="status-dot"></span>空闲</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 底部日志区（窄屏时显示） -->
+      <section class="log-section hidden" id="log-section-bottom">
+        <div class="log-header">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 10H6v-2h8v2zm4-4H6v-2h12v2z"/>
+          </svg>
+          <span>任务队列</span>
+        </div>
+        <div class="log-list" id="log-list-bottom">
+          <div class="log-item">
+            <span class="log-task">系统</span>
+            <span class="log-msg">等待任务开始...</span>
+            <span class="log-status idle"><span class="status-dot"></span>空闲</span>
+          </div>
+        </div>
+      </section>
+      </div><!-- /view-single -->
+
+      <!-- 批量模式 -->
+      <div id="view-batch" class="hidden">
+        <div class="batch-layout">
+          <!-- 左：文件列表 -->
+          <div class="panel batch-files">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <svg class="panel-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+                <h3>待处理文件 (<span id="batch-count">0</span>)</h3>
+              </div>
+              <div class="panel-header-left">
+                <button class="btn btn-sm" id="batch-add">添加视频</button>
+                <button class="btn-clear" id="batch-clear" title="清空列表">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                  清空
+                </button>
+              </div>
+            </div>
+            <div class="batch-body">
+              <div class="batch-drop" id="batch-drop">
+                <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                <p>拖入视频文件，或点击「添加视频」</p>
+              </div>
+              <div class="batch-list" id="batch-list"></div>
+            </div>
+          </div>
+
+          <!-- 右：共享设置 + 执行 -->
+          <div class="batch-settings">
+            <!-- 预设 -->
+            <div class="preset-bar">
+              <select id="preset-select"><option value="">预设：自定义</option></select>
+              <button class="btn btn-sm" id="preset-save" title="保存当前设置为预设">保存</button>
+              <button class="btn btn-sm" id="preset-delete" title="删除所选预设">删除</button>
+            </div>
+
+            <!-- 音频 -->
+            <div class="panel panel-task">
+              <div class="panel-header">
+                <div class="panel-header-left"><h3>音频提取</h3></div>
+                <label class="checkbox-label"><input type="checkbox" id="b-audio-enable"><span class="checkbox-custom"></span><span>启用</span></label>
+              </div>
+              <div class="form-grid">
+                <div class="form-group"><label>编码</label>
+                  <select id="b-audio-codec"><option value="aac" selected>AAC (.m4a)</option><option value="mp3">MP3</option><option value="opus">Opus (.ogg)</option></select>
+                </div>
+                <div class="form-group"><label>码率</label>
+                  <select id="b-audio-bitrate"><option value="128k" selected>128 kbps</option><option value="192k">192 kbps</option><option value="256k">256 kbps</option><option value="320k">320 kbps</option></select>
+                </div>
+                <div class="form-group form-group-full">
+                  <label class="checkbox-label"><input type="checkbox" id="b-audio-all-tracks" checked><span class="checkbox-custom"></span><span>导出全部音轨（多音轨视频每条一个文件）</span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- 雪碧图 -->
+            <div class="panel panel-task">
+              <div class="panel-header">
+                <div class="panel-header-left"><h3>雪碧图生成</h3></div>
+                <label class="checkbox-label"><input type="checkbox" id="b-sprite-enable"><span class="checkbox-custom"></span><span>启用</span></label>
+              </div>
+              <div class="form-grid">
+                <div class="form-group"><label>缩略图宽度</label><input type="number" id="b-sprite-width" value="160" min="80" max="480"></div>
+                <div class="form-group"><label>列数</label><input type="number" id="b-sprite-cols" value="10" min="1" max="20"></div>
+                <div class="form-group"><label>间隔 (秒)</label><input type="number" id="b-sprite-interval" value="10" min="1" max="60"></div>
+              </div>
+            </div>
+
+            <!-- 预览视频 -->
+            <div class="panel panel-task">
+              <div class="panel-header">
+                <div class="panel-header-left"><h3>预览视频</h3></div>
+                <label class="checkbox-label"><input type="checkbox" id="b-preview-enable"><span class="checkbox-custom"></span><span>启用</span></label>
+              </div>
+              <div class="form-grid">
+                <div class="form-group form-group-full"><label>输出格式</label>
+                  <select id="b-preview-format"><option value="mp4" selected>MP4 视频</option><option value="gif">GIF 动图</option><option value="webp">WebP 动图</option></select>
+                </div>
+                <div class="form-group" id="b-pv-codec"><label>编码</label>
+                  <select id="b-preview-codec"><option value="h264" selected>H.264 (软件)</option><option value="h265">H.265 (软件)</option></select>
+                </div>
+                <div class="form-group"><label>输出宽度 (px)</label><input type="number" id="b-preview-width" value="640" min="160" max="1920"></div>
+                <div class="form-group"><label>帧率 (fps)</label>
+                  <select id="b-preview-fps"><option value="0" selected>原始帧率</option><option value="30">30</option><option value="25">25</option><option value="24">24</option><option value="15">15</option><option value="12">12</option></select>
+                </div>
+                <div class="form-group" id="b-pv-gifcolors"><label>颜色数量</label>
+                  <select id="b-preview-gif-colors"><option value="256" selected>256 色</option><option value="128">128 色</option><option value="64">64 色</option><option value="32">32 色</option></select>
+                </div>
+                <div class="form-group" id="b-pv-webpquality"><label>画质 <span class="label-value" id="b-preview-webp-quality-label">70</span></label>
+                  <input type="range" id="b-preview-webp-quality" min="1" max="100" value="70">
+                </div>
+                <div class="form-group"><label>片段数量</label><input type="number" id="b-preview-clips" value="10" min="1" max="20"></div>
+                <div class="form-group"><label>每段时长 (秒)</label><input type="number" id="b-preview-clip-duration" value="1" min="0.5" max="10" step="0.5"></div>
+              </div>
+            </div>
+
+            <!-- 自动间隔截帧 -->
+            <div class="panel panel-task">
+              <div class="panel-header">
+                <div class="panel-header-left"><h3>自动间隔截帧</h3></div>
+                <label class="checkbox-label"><input type="checkbox" id="b-frames-enable"><span class="checkbox-custom"></span><span>启用</span></label>
+              </div>
+              <div class="form-grid">
+                <div class="form-group"><label>间隔 (秒)</label><input type="number" id="b-frames-interval" value="5" min="1" max="120"></div>
+                <div class="form-group"><label>格式</label>
+                  <select id="b-frames-format"><option value="png">PNG（无损）</option><option value="jpg" selected>JPG</option><option value="webp">WebP</option></select>
+                </div>
+                <div class="form-group"><label>尺寸</label>
+                  <select id="b-frames-size">
+                    <option value="0" selected>原始尺寸</option>
+                    <option value="2160">2160p (4K)</option>
+                    <option value="1440">1440p (2K)</option>
+                    <option value="1080">1080p</option>
+                    <option value="720">720p</option>
+                    <option value="480">480p</option>
+                  </select>
+                </div>
+                <div class="form-group" id="b-fr-quality"><label>画质 <span class="label-value" id="b-frames-quality-label">85</span></label>
+                  <input type="range" id="b-frames-quality" min="1" max="100" value="85">
+                </div>
+              </div>
+            </div>
+
+            <div class="actions batch-actions">
+              <button class="btn btn-primary" id="batch-run">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                开始批量
+              </button>
+              <button class="btn" id="batch-stop" disabled>停止</button>
+            </div>
+            <div class="batch-progress" id="batch-progress"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 导出弹窗 -->
+  <div class="modal hidden" id="modal-export">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>导出截帧</h3>
+        <button class="btn-close" id="btn-close-export">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>导出范围</label>
+          <div class="radio-group">
+            <label class="radio-label">
+              <input type="radio" name="export-range" value="current" checked>
+              <span class="radio-custom"></span>
+              <span>当前帧</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="export-range" value="all">
+              <span class="radio-custom"></span>
+              <span>全部已截帧 (<span id="export-frame-count">0</span>)</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>输出格式</label>
+          <select id="export-format">
+            <option value="webp" selected>WebP</option>
+            <option value="jpg">JPG</option>
+            <option value="png">PNG（无损）</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>导出尺寸</label>
+          <select id="export-size">
+            <option value="0" selected>原始尺寸</option>
+          </select>
+          <div class="form-hint" id="export-size-hint">保持原始分辨率</div>
+        </div>
+        <div class="form-group" id="export-quality-group">
+          <label>画质 <span class="label-value" id="export-quality-label">85</span></label>
+          <input type="range" id="export-quality" min="1" max="100" value="85">
+        </div>
+        <div class="form-hint" id="export-hint">JPG 建议 85-95</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="btn-cancel-export">取消</button>
+        <button class="btn btn-primary" id="btn-confirm-export">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+          </svg>
+          保存
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div class="modal hidden" id="modal-settings">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>设置</h3>
+        <button class="btn-close" id="btn-close-settings">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>语言</label>
+          <select id="setting-lang">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>默认输出目录</label>
+          <div class="input-with-btn">
+            <input type="text" id="setting-output-dir" placeholder="与源文件相同目录" readonly>
+            <button class="btn btn-sm" id="btn-select-output-dir">选择</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="btn-cancel-settings">取消</button>
+        <button class="btn btn-primary" id="btn-save-settings">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          保存
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 帮助弹窗 -->
+  <div class="modal hidden" id="modal-help">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-help">
+      <div class="modal-header">
+        <h3>帮助与说明</h3>
+        <button class="btn-close" id="btn-close-help">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="help-section">
+          <h4>官网</h4>
+          <p>访问官方网站了解更多：<a class="help-link" data-ext-url="https://vt.complexmission.com">vt.complexmission.com</a></p>
+          <p>开源地址：<a class="help-link" data-ext-url="https://github.com/complex-mission/video-toolkit">github.com/complex-mission/video-toolkit</a></p>
+        </div>
+        <div class="help-section">
+          <h4>硬件加速编码（在本程序中的作用）</h4>
+          <p>硬件加速 = 用显卡的专用单元来<b>编码视频</b>。在本程序里它<b>只作用于「预览视频」的导出</b>（生成预览视频时的编码环节），其中 <b>H.265 提速最明显</b>。</p>
+          <p>以下功能<b>不受影响</b>（与硬件加速无关）：</p>
+          <ul>
+            <li><b>截帧 / 画面预览</b>：只解码和显示、不做编码，快慢与 GPU 加速无关。</li>
+            <li><b>提取音频</b>：是音频编码，不走视频硬件编码器。</li>
+            <li><b>雪碧图</b>：输出图片（WebP/JPG），也不走视频硬件编码器。</li>
+          </ul>
+          <p><b>速度 vs 画质：</b>硬件编码快很多、CPU 占用低；但<b>同等设置下画质通常略低于 CPU 软件编码</b>（libx264/libx265 压缩效率更高，同体积画质更好）。<b>要快 → 选硬件；要画质/最小体积 → 选软件。</b></p>
+          <p><b>如何选择 / 不用 GPU：</b>在「预览视频 → 编码」下拉里选。<b>默认就是软件编码（H.265 软件），不会自动用 GPU</b>；想用硬件就选下拉里出现的硬件选项，想关掉就保持「软件」选项即可。</p>
+          <p>标题栏徽章显示本机检测到的硬件编码器：<b>AMF</b>（AMD 显卡）、<b>NVENC</b>（NVIDIA）、<b>QSV</b>（Intel 核显）、<b>VideoToolbox</b>（macOS）；没有则显示「软件编码」。</p>
+          <p id="help-hw-detected" class="help-hw-detected"></p>
+        </div>
+
+        <div class="help-section">
+          <h4>视频编码：H.264 与 H.265</h4>
+          <ul>
+            <li><b>H.264</b>：兼容性最好，几乎所有设备/浏览器都能播放。</li>
+            <li><b>H.265（HEVC）</b>：相同画质下体积约小一半，但更吃编码性能，部分老设备/浏览器不支持。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h4>输出格式：MP4 / GIF / WebP</h4>
+          <ul>
+            <li><b>MP4</b>：通用视频，体积最优、可含音频。</li>
+            <li><b>GIF</b>：兼容性最好，但仅 256 色、体积偏大、无音频。颜色数越少体积越小。</li>
+            <li><b>WebP 动图</b>：比 GIF 更小、色彩更好；但大尺寸/长时长动画在 <b>Safari</b> 下可能越播越慢甚至卡死，建议小尺寸、短时长、低帧率。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h4>雪碧图 + VTT</h4>
+          <p>雪碧图把多张缩略图拼到一张大图里；配套的 VTT 文件记录每个时间点对应缩略图在大图中的位置。播放器加载 VTT 后，鼠标悬停进度条即可显示预览缩略图（常见于各视频网站）。</p>
+        </div>
+
+        <div class="help-section">
+          <h4>帧率 (fps)</h4>
+          <ul>
+            <li><b>原始帧率</b>：与源一致，最流畅、体积最大。</li>
+            <li><b>29.97</b>：NTSC（北美/日本电视标准）；<b>25</b>：PAL（欧洲）；<b>24</b>：电影感。</li>
+            <li><b>12–15</b>：预览/缩略够用，体积明显更小。</li>
+          </ul>
+        </div>
+
+        <div class="help-section">
+          <h4>截帧导出</h4>
+          <ul>
+            <li>尺寸按高度等比缩放，<b>只缩小不放大</b>（如 4K 源导出 720p 海报）。</li>
+            <li>格式：PNG 无损、体积最大；JPG / WebP 可调画质、体积更小。</li>
+            <li>所有产物都会存进<b>以视频文件名命名的文件夹</b>，多次导出自动接续编号、不覆盖。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-ok-help">知道了</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预设命名弹窗 -->
+  <div class="modal hidden" id="modal-preset">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>保存预设</h3>
+        <button class="btn-close" id="btn-close-preset">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>预设名称</label>
+          <input type="text" id="preset-name-input" placeholder="例如：720p Web 预览" maxlength="40">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" id="btn-cancel-preset">取消</button>
+        <button class="btn btn-primary" id="btn-confirm-preset">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="api.js"></script>
+  <script src="compat-ui.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

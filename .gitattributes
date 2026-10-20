@@ -1,0 +1,2 @@
+# 构建脚本在 Windows CI 上由 bash 执行，必须保持 LF
+*.sh text eol=lf

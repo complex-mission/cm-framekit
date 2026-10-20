@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "CM FrameKit",
+  "version": "2.0.0",
+  "identifier": "com.complexmission.framekit",
+  "build": {
+    "frontendDist": "../ui"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "CM FrameKit",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 1150,
+        "minHeight": 700,
+        "decorations": false,
+        "dragDropEnabled": true,
+        "zoomHotkeysEnabled": false,
+        "center": true,
+        "visible": false,
+        "backgroundColor": "#1a1a1a"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data: blob: http://127.0.0.1:*; media-src 'self' blob: http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:*"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "resources": {
+      "ffmpeg/": "ffmpeg/"
+    },
+    "publisher": "Complex Mission",
+    "copyright": "Copyright © 2026 Complex Mission",
+    "shortDescription": "截帧 / 提取音频 / 雪碧图 / 预览视频",
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "installerIcon": "icons/icon.ico",
+        "languages": ["SimpChinese", "English"],
+        "displayLanguageSelector": false
+      }
+    }
+  }
+}

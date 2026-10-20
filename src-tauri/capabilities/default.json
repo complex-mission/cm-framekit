@@ -1,0 +1,21 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "CM FrameKit main window",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-minimize",
+    "core:window:allow-toggle-maximize",
+    "core:window:allow-is-maximized",
+    "core:window:allow-close",
+    "core:window:allow-start-dragging",
+    "core:webview:default",
+    "core:event:default",
+    "dialog:default",
+    "opener:default",
+    { "identifier": "opener:allow-open-path", "allow": [{ "path": "**" }] },
+    { "identifier": "opener:allow-reveal-item-in-dir", "allow": [{ "path": "**" }] },
+    "window-state:default"
+  ]
+}
