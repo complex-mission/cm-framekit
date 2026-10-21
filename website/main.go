@@ -168,7 +168,7 @@ func securityHeaders(h http.Handler, https bool) http.Handler {
 		} else {
 			hd.Set("Cross-Origin-Resource-Policy", "same-origin")
 		}
-		// Without includeSubDomains: other *.complexmission.com hosts are not ours to pin to HTTPS.
+		// If nginx adds its own HSTS too, browsers only honour the first header; keep one of them.
 		if https {
 			hd.Set("Strict-Transport-Security", "max-age=31536000")
 		}
