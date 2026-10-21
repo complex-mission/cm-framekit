@@ -1,0 +1,23 @@
+{{define "title"}}{{.T "cl.title"}} · CM FrameKit{{end}}
+{{define "content"}}
+<section class="wrap narrow">
+  <h1 class="page-title">{{.T "cl.title"}}</h1>
+  {{with .Data.Entries}}
+  <ol class="timeline">
+    {{range .}}
+    <li class="tl-item" id="v{{.Version}}">
+      <div class="tl-head">
+        <a class="tl-version" href="#v{{.Version}}">v{{.Version}}</a>
+        {{if .Mandatory}}<span class="tag tag-pink">{{$.T "cl.mandatory"}}</span>{{end}}
+        <time>{{date .PublishedAt}}</time>
+      </div>
+      <div class="tl-platforms">{{range .Platforms}}<span class="tag">{{plat .}}</span>{{end}}</div>
+      <div class="notes">{{notes (loc $.Lang .Notes .NotesEN)}}</div>
+    </li>
+    {{end}}
+  </ol>
+  {{else}}
+  <p class="muted">{{.T "cl.empty"}}</p>
+  {{end}}
+</section>
+{{end}}

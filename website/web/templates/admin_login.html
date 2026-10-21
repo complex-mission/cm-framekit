@@ -1,0 +1,20 @@
+{{define "title"}}{{.T "admin.login"}} · CM FrameKit{{end}}
+{{define "content"}}
+<section class="wrap login-wrap">
+  <form class="login-card" id="login-form" autocomplete="off">
+    <img src="{{asset "logo.svg"}}" alt="" width="56" height="56">
+    <h1>{{.T "admin.login"}}</h1>
+    <p class="muted small">{{.T "admin.only"}}</p>
+    <label>{{.T "admin.phone"}}<input id="phone" type="tel" inputmode="numeric" maxlength="16" required></label>
+    <label>{{.T "admin.code"}}
+      <span class="row">
+        <input id="code" inputmode="numeric" maxlength="6" required>
+        <button type="button" class="btn btn-ghost" id="send-code">{{.T "admin.send"}}</button>
+      </span>
+    </label>
+    <button class="btn btn-primary" type="submit">{{.T "admin.signin"}}</button>
+    <p class="form-msg" id="login-msg" role="status"></p>
+  </form>
+</section>
+{{end}}
+{{define "scripts"}}<script src="{{asset "admin.js"}}" defer data-admin="{{.Admin}}"></script>{{end}}

@@ -1,0 +1,30 @@
+{{define "title"}}{{.T "dl.title"}}{{end}}
+{{define "content"}}
+<section class="wrap narrow">
+  <h1 class="page-title">{{.T "dl.title"}}</h1>
+  {{with .Data}}
+  {{if .Has}}
+  <div class="dl-card">
+    <dl class="dl-meta">
+      <div><dt>{{$.T "dl.version"}}</dt><dd>v{{.Rel.Version}}</dd></div>
+      <div><dt>{{$.T "dl.platform"}}</dt><dd>{{plat .Rel.Platform}}</dd></div>
+      <div><dt>{{$.T "dl.size"}}</dt><dd>{{size .Rel.Size}}</dd></div>
+      <div><dt>{{$.T "dl.date"}}</dt><dd>{{date .Rel.PublishedAt}}</dd></div>
+    </dl>
+    <button class="btn btn-primary btn-lg js-download" data-platform="{{.Rel.Platform}}" data-version="{{.Rel.Version}}">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
+      {{$.T "dl.title"}}
+    </button>
+    <p class="muted small">{{$.T "dl.verify"}}</p>
+    <p class="dl-status" role="status" aria-live="polite"></p>
+    <p class="sha">SHA-256 <code>{{.Rel.SHA256}}</code></p>
+    {{with loc $.Lang .Rel.Notes .Rel.NotesEN}}<div class="notes">{{notes .}}</div>{{end}}
+  </div>
+  {{else}}
+  <p class="muted">{{$.T "dl.none"}}</p>
+  {{end}}
+  {{end}}
+  <p class="cta-links"><a href="/changelog">{{.T "dl.changelog"}} →</a></p>
+</section>
+{{end}}
+{{define "scripts"}}<script src="{{asset "site.js"}}" defer></script>{{end}}

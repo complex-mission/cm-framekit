@@ -1,0 +1,19 @@
+[Unit]
+Description=CM FrameKit website
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=www
+WorkingDirectory=/opt/fk-site
+ExecStart=/opt/fk-site/fk-site -env /opt/fk-site/.env
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/fk-site/data
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

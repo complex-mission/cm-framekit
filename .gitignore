@@ -1,6 +1,6 @@
 .ffbuild/
 src-tauri/ffmpeg/
-src-tauri/target/
+src-tauri/target*/
 src-tauri/gen/
 node_modules/
 dist/

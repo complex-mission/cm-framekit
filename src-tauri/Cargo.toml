@@ -3,6 +3,8 @@ name = "cm-framekit"
 version = "2.0.0"
 description = "CM FrameKit — 截帧 / 提取音频 / 雪碧图 / 预览视频，输出面向全浏览器兼容"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/complex-mission/cm-framekit"
 rust-version = "1.77"
 
 [lib]

@@ -4,6 +4,8 @@
 
 CM视频工具箱（Electron）的 Rust + Tauri 重写版，内置精简编译的 FFmpeg。
 
+官网与下载：https://fk.complexmission.com
+
 ## 特性
 
 - **截帧**：时间轴逐帧定位截图，批量按间隔导出（PNG / JPG / WebP）
@@ -48,3 +50,15 @@ FRAMEKIT_TEST_MEDIA=<素材目录> cargo test --test selftest -- --ignored --noc
 ```
 
 对目录里每个文件跑全部任务，并用 ffprobe 与内置 MP4 扫描器校验输出（像素格式、音频编码、faststart、hvc1、雪碧图分张）。
+
+## 官网 / 版本检测
+
+`website/` 是 fk.complexmission.com 的 Go 后端：官网、更新日志、安装包下载（阿里云验证码 + OSS），以及短信登录的发布后台，详见 [website/README.md](website/README.md)。
+
+软件启动 3 秒后会静默请求 `https://fk.complexmission.com/api/update`，有新版时标题栏出现提示；帮助页底部可以手动「检查更新」。
+
+## 许可证
+
+本项目代码以 [MIT](LICENSE) 许可证开源。
+
+随软件分发的 FFmpeg 及 x264 / x265 为 GPL，以独立可执行文件的形式提供，许可证见安装目录下的 `ffmpeg/LICENSE-FFmpeg-GPLv2.txt`。

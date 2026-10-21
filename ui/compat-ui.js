@@ -39,7 +39,7 @@
     panel.innerHTML = `
       <button type="button" class="compat-summary" ${list.length ? '' : 'disabled'}>
         <span class="compat-icon">${icon}</span><span>${esc(label)}</span>
-        ${list.length ? `<span class="compat-toggle">${expanded ? '▴' : '▾'}</span>` : ''}
+        ${list.length ? `<span class="compat-toggle${expanded ? ' open' : ''}"><span>${expanded ? (en() ? 'Hide' : '收起') : (en() ? 'Details' : '详情')}</span><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg></span>` : ''}
       </button>
       ${list.length && expanded ? `<ul class="compat-list">${items}</ul><div class="compat-foot">${esc(foot)}</div>` : ''}`;
     const btn = panel.querySelector('.compat-summary');

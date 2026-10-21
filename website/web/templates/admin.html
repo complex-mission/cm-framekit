@@ -1,0 +1,79 @@
+{{define "title"}}{{.T "admin.title"}} · CM FrameKit{{end}}
+{{define "content"}}
+<section class="wrap admin">
+  <div class="admin-head">
+    <h1 class="page-title">发布管理</h1>
+    <span class="muted small">存储 {{.Data.Storage}} · 会话 {{.Data.KV}}</span>
+    <button class="btn btn-ghost" id="logout">退出登录</button>
+  </div>
+
+  <div class="panel">
+    <h2>上传新版本</h2>
+    <form id="upload-form" class="upload-grid">
+      <label>版本号<input name="version" placeholder="2.1.0" required pattern="v?\d+\.\d+\.\d+(-[0-9A-Za-z.\-]+)?"></label>
+      <label>平台
+        <select name="platform">{{range .Data.Platforms}}<option value="{{.}}">{{plat .}}</option>{{end}}</select>
+      </label>
+      <p class="span2 muted small">更新说明：每行一条，“- ” 开头为列表，“## ” 开头为小标题。英文版留空时，英文页面显示中文说明。</p>
+      <label>中文更新说明
+        <textarea name="notes" rows="8" placeholder="- 新增：…&#10;- 修复：…"></textarea>
+      </label>
+      <label>English release notes
+        <textarea name="notes_en" rows="8" placeholder="- New: …&#10;- Fixed: …"></textarea>
+      </label>
+      <label class="span2">安装包<input name="file" type="file" required></label>
+      <label class="check"><input type="checkbox" name="publish" value="1" checked> 立即发布</label>
+      <label class="check"><input type="checkbox" name="mandatory" value="1"> 强制更新（软件内提示不可跳过）</label>
+      <div class="span2 upload-actions">
+        <button class="btn btn-primary" type="submit" id="upload-btn">上传</button>
+        <div class="progress" hidden><div class="progress-bar"></div></div>
+        <span class="form-msg" id="upload-msg" role="status"></span>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>版本列表</h2>
+    <p class="muted small">软件检测更新、官网下载都只看“已发布”中版本号最高的一个。下线最新版即可回滚到上一版。</p>
+    <div class="table-wrap">
+      <table class="table" id="releases">
+        <thead><tr><th>版本</th><th>平台</th><th>文件</th><th>大小</th><th>下载</th><th>状态</th><th>上传时间</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>操作日志</h2>
+      <select id="log-filter">
+        <option value="">全部</option>
+        <option value="login">登录</option>
+        <option value="release">版本操作</option>
+        <option value="download">下载</option>
+        <option value="contact">留言</option>
+        <option value="server">服务</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table class="table table-log" id="logs">
+        <thead><tr><th>时间</th><th>操作</th><th>结果</th><th>IP</th><th>详情</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<dialog id="notes-dialog" class="dialog">
+  <form method="dialog">
+    <h3 id="notes-title">编辑更新说明</h3>
+    <label>中文<textarea id="notes-text" rows="9"></textarea></label>
+    <label>English<textarea id="notes-text-en" rows="9"></textarea></label>
+    <div class="dialog-actions">
+      <button class="btn btn-ghost" value="cancel">取消</button>
+      <button class="btn btn-primary" value="save" id="notes-save">保存</button>
+    </div>
+  </form>
+</dialog>
+{{end}}
+{{define "scripts"}}<script src="{{asset "admin.js"}}" defer data-admin="{{.Admin}}"></script>{{end}}

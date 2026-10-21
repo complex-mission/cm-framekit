@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="{{if eq .Lang "zh"}}zh-CN{{else}}en{{end}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{block "title" .}}CM FrameKit — {{.T "hero.tagline"}}{{end}}</title>
+<meta name="description" content="{{.Desc}}">
+{{if .NoIndex}}<meta name="robots" content="noindex, nofollow">
+{{else}}<link rel="canonical" href="{{.Canonical}}">
+<link rel="alternate" hreflang="zh-CN" href="{{.AltZH}}">
+<link rel="alternate" hreflang="en" href="{{.AltEN}}">
+<link rel="alternate" hreflang="x-default" href="{{.AltZH}}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CM FrameKit">
+<meta property="og:title" content="{{block "ogtitle" .}}CM FrameKit — {{.T "hero.tagline"}}{{end}}">
+<meta property="og:description" content="{{.Desc}}">
+<meta property="og:url" content="{{.Canonical}}">
+<meta property="og:image" content="{{.OGImage}}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="{{if eq .Lang "en"}}en_US{{else}}zh_CN{{end}}">
+<meta property="og:locale:alternate" content="{{if eq .Lang "en"}}zh_CN{{else}}en_US{{end}}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{.OGImage}}">
+{{with .LD}}<script type="application/ld+json">{{.}}</script>{{end}}
+{{end}}<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<meta name="theme-color" content="#1f5baa">
+<link rel="icon" href="{{asset "logo.svg"}}" type="image/svg+xml">
+{{block "head" .}}{{end}}
+<link rel="stylesheet" href="{{asset "site.css"}}">
+</head>
+<body class="page-{{.Page}}">
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="/"><img src="{{asset "logo.svg"}}" alt="" width="32" height="32"><span>CM FrameKit</span></a>
+    <nav class="nav-links">
+      <a href="/"{{if eq .Page "home"}} class="active"{{end}}>{{.T "nav.home"}}</a>
+      <a href="/changelog"{{if eq .Page "changelog"}} class="active"{{end}}>{{.T "nav.changelog"}}</a>
+      <a href="/contact"{{if eq .Page "contact"}} class="active"{{end}}>{{.T "nav.contact"}}</a>
+      <a href="https://github.com/{{.Repo}}" target="_blank" rel="noopener">GitHub</a>
+      {{if eq .Lang "zh"}}<a class="lang" href="?lang=en">EN</a>{{else}}<a class="lang" href="?lang=zh">中文</a>{{end}}
+    </nav>
+  </div>
+</header>
+<main>
+{{block "content" .}}{{end}}
+</main>
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <span>© {{.Year}} {{.T "footer.rights"}}</span>
+    <span><a href="/changelog">{{.T "nav.changelog"}}</a> · <a href="/contact">{{.T "nav.contact"}}</a> · <a href="https://github.com/{{.Repo}}" target="_blank" rel="noopener">github.com/{{.Repo}}</a></span>
+  </div>
+</footer>
+<div id="fk-config" hidden
+  data-lang="{{.Lang}}"
+  data-captcha="{{if .CaptchaOn}}1{{end}}"
+  data-captcha-region="{{.CaptchaRegion}}"
+  data-captcha-prefix="{{.CaptchaPrefix}}"
+  data-captcha-scene="{{.CaptchaScene}}"
+  data-captcha-encrypt="{{if .CaptchaCrypt}}1{{end}}"
+  data-msg-working="{{.T "dl.working"}}"
+  data-msg-started="{{.T "dl.started"}}"
+  data-msg-retry="{{.T "dl.retry"}}"
+  data-msg-failed="{{.T "dl.failed"}}"
+  data-msg-captcha="{{.T "dl.captcha"}}"
+  data-msg-limited="{{.T "dl.limited"}}"></div>
+{{block "scripts" .}}{{end}}
+</body>
+</html>

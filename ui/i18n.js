@@ -183,14 +183,28 @@
     '移除': 'Remove',
     '例如：720p Web 预览': 'e.g. 720p Web preview',
     '无损': 'Lossless',
+    // 版本检测
+    '检查更新': 'Check for updates',
+    '查看新版本': 'View new version',
+    '发现新版本': 'New version available',
+    '当前版本': 'Current version',
+    '这是一次重要更新，请尽快升级。': 'This is an important update. Please upgrade soon.',
+    '完整更新日志': 'Full changelog',
+    '稍后': 'Later',
+    '前往下载': 'Download',
+    '新版本': 'New',
+    '正在检查更新…': 'Checking for updates…',
+    '已是最新版本': 'You are up to date',
+    '检查更新失败，请稍后再试': 'Could not check for updates, try again later',
   };
 
   // 帮助正文（英文版，整体切换）
   const HELP_EN = `
     <div class="help-section">
       <h4>Website</h4>
-      <p>Visit the official site for more: <a class="help-link" data-ext-url="https://vt.complexmission.com">vt.complexmission.com</a></p>
-      <p>Source code: <a class="help-link" data-ext-url="https://github.com/complex-mission/video-toolkit">github.com/complex-mission/video-toolkit</a></p>
+      <p>Visit the official site for more: <a class="help-link" data-ext-url="https://fk.complexmission.com">fk.complexmission.com</a></p>
+      <p>Source code: <a class="help-link" data-ext-url="https://github.com/complex-mission/cm-framekit">github.com/complex-mission/cm-framekit</a></p>
+      <p>Changelog: <a class="help-link" data-ext-url="https://fk.complexmission.com/changelog">fk.complexmission.com/changelog</a></p>
     </div>
     <div class="help-section">
       <h4>Hardware-Accelerated Encoding (in this app)</h4>

@@ -1,0 +1,30 @@
+{{define "title"}}{{.T "ct.title"}} · CM FrameKit{{end}}
+{{define "content"}}
+<section class="wrap narrow">
+  <h1 class="page-title">{{.T "ct.title"}}</h1>
+  <p class="muted contact-lead">{{.T "ct.lead"}}</p>
+  <form class="contact-card" id="contact-form" novalidate>
+    <div class="contact-row">
+      <label>{{.T "ct.name"}}<input name="name" maxlength="50" autocomplete="name" placeholder="{{.T "ct.optional"}}"></label>
+      <label>{{.T "ct.contact"}}<input name="contact" maxlength="100" autocomplete="email" placeholder="{{.T "ct.contact.ph"}}"></label>
+    </div>
+    <label>{{.T "ct.message"}}
+      <textarea name="message" rows="7" minlength="5" maxlength="2000" required placeholder="{{.T "ct.message.ph"}}"></textarea>
+      <span class="counter small muted"><span id="ct-count">0</span> / 2000</span>
+    </label>
+    <!-- honeypot: real visitors never see or fill this -->
+    <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+    <div class="contact-actions">
+      <button class="btn btn-primary" type="submit">{{.T "ct.send"}}</button>
+      <p class="form-msg" id="ct-msg" role="status"></p>
+    </div>
+  </form>
+</section>
+<div id="ct-text" hidden
+  data-sending="{{.T "ct.sending"}}"
+  data-ok="{{.T "ct.ok"}}"
+  data-short="{{.T "ct.short"}}"
+  data-limited="{{.T "ct.limited"}}"
+  data-failed="{{.T "ct.failed"}}"></div>
+{{end}}
+{{define "scripts"}}<script src="{{asset "contact.js"}}" defer></script>{{end}}
