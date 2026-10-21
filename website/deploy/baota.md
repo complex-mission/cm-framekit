@@ -70,6 +70,34 @@ proxy_set_header X-Forwarded-Proto $scheme;
 proxy_set_header Host $host;
 ```
 
+### /changelog 被宝塔拦截
+
+宝塔默认有一条禁止访问 CHANGELOG、README 等文件的规则，会把 `/changelog`（更新日志页）直接 404。在站点配置文件里、其它 `location` 之前加一个精确匹配（端口按 `ADDR` 填）：
+
+```nginx
+location = /changelog {
+    proxy_pass http://127.0.0.1:22341;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $remote_addr;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
+
+### Content-Security-Policy
+
+其它安全响应头（HSTS、Permissions-Policy、COOP、CORP、X-Frame-Options 等）由程序自己输出。CSP 放在 nginx 里，和上面的代理配置写在同一个 `location /` 块里：
+
+```nginx
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://o.alicdn.com https://g.alicdn.com; style-src 'self' 'unsafe-inline' https://g.alicdn.com; img-src 'self' data: blob: https://*.alicdn.com https://*.aliyuncs.com; font-src 'self' data: https://g.alicdn.com; connect-src 'self' data: https://*.aliyuncs.com; frame-src https://*.alicdn.com https://*.aliyuncs.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" always;
+```
+
+- `alicdn.com` / `aliyuncs.com` 是阿里云验证码的 SDK、样式、设备检测和校验接口；`connect-src` 里的 `data:` 也是验证码 SDK 需要的，去掉会导致验证码失败。
+- `style-src 'unsafe-inline'` 同样是验证码 SDK 注入样式所需。
+- nginx 的 `add_header` 写在某个 `location` 里时，该 location 不再继承上层的 `add_header`。所以要和其它 `add_header` 放在同一层，并且带上 `always`。
+- 如果为 `/changelog` 单独加过 `location = /changelog { … }`（绕开宝塔禁止访问 CHANGELOG 的规则），这一行也要在那个块里再写一次，否则更新日志页没有 CSP。
+- 改完执行 `nginx -t` 检查，再重载。
+
 宝塔默认的反向代理会开启缓存，对本站要**关闭**（站点 → 反向代理 → 编辑 → 关闭缓存）。否则下载接口、版本检测和后台页面都可能被缓存。
 
 ## 5. 验证

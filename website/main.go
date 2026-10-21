@@ -148,15 +148,30 @@ func (a *App) routes() http.Handler {
 	mux.HandleFunc("POST "+p+"/api/releases/{id}", a.adminPost(a.handleEditRelease, true))
 	mux.HandleFunc("POST "+p+"/api/releases/{id}/delete", a.adminPost(a.handleDeleteRelease, true))
 	mux.HandleFunc("GET "+p+"/api/logs", a.adminGet(a.handleLogs))
-	return securityHeaders(mux)
+	return securityHeaders(mux, strings.HasPrefix(a.cfg.BaseURL, "https://"))
 }
 
-func securityHeaders(h http.Handler) http.Handler {
+// securityHeaders sets everything except Content-Security-Policy, which lives in the nginx config
+// (deploy/baota.md) next to the other deployment-specific settings.
+func securityHeaders(h http.Handler, https bool) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		hd := w.Header()
 		hd.Set("X-Content-Type-Options", "nosniff")
 		hd.Set("Referrer-Policy", "strict-origin-when-cross-origin")
 		hd.Set("X-Frame-Options", "DENY")
+		hd.Set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()")
+		hd.Set("Cross-Origin-Opener-Policy", "same-origin")
+		// Static files and the read-only APIs are meant to be used from elsewhere (link previews,
+		// the desktop app's update check); pages and admin endpoints stay same-origin.
+		if strings.HasPrefix(r.URL.Path, "/static/") || strings.HasPrefix(r.URL.Path, "/api/") {
+			hd.Set("Cross-Origin-Resource-Policy", "cross-origin")
+		} else {
+			hd.Set("Cross-Origin-Resource-Policy", "same-origin")
+		}
+		// Without includeSubDomains: other *.complexmission.com hosts are not ours to pin to HTTPS.
+		if https {
+			hd.Set("Strict-Transport-Security", "max-age=31536000")
+		}
 		h.ServeHTTP(w, r)
 	})
 }
