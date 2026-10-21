@@ -52,53 +52,59 @@ CAPTCHA_DISABLED=false
 
 ## 4. SSL 与 nginx 配置
 
-站点设置 → SSL → Let's Encrypt 申请证书，开启「强制 HTTPS」。
+站点设置 → SSL：部署证书（Let's Encrypt 或已购证书），开启「强制 HTTPS」。阿里云安全组和宝塔「安全」里都要放行 **80 和 443**，否则 `http://` 访问连不上，也就跳转不到 https。
 
-然后在站点的「配置文件」（或反向代理的配置文件）里，`location /` 的代理配置中补上：
-
-```nginx
-# 后台上传安装包：与 MAX_UPLOAD_MB 一致，不缓冲，超时放长
-client_max_body_size 1024m;
-proxy_request_buffering off;
-proxy_read_timeout 600s;
-proxy_send_timeout 600s;
-
-# 真实客户端 IP（限流与日志用）
-proxy_set_header X-Real-IP $remote_addr;
-proxy_set_header X-Forwarded-For $remote_addr;
-proxy_set_header X-Forwarded-Proto $scheme;
-proxy_set_header Host $host;
-```
-
-### /changelog 被宝塔拦截
-
-宝塔默认有一条禁止访问 CHANGELOG、README 等文件的规则，会把 `/changelog`（更新日志页）直接 404。在站点配置文件里、其它 `location` 之前加一个精确匹配（端口按 `ADDR` 填）：
+然后在站点「配置文件」里，把反向代理那一段（`# HTTP反向代理相关配置开始 >>>` 到 `结束 <<<`）换成下面的内容。端口按 `.env` 的 `ADDR` 填。这份配置已在线上验证过。
 
 ```nginx
-location = /changelog {
-    proxy_pass http://127.0.0.1:22341;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $remote_addr;
-    proxy_set_header X-Forwarded-Proto $scheme;
-}
+    # HTTP反向代理相关配置开始 >>>
+    # 只允许本机清缓存，否则任何人都能清空缓存
+    location ~ /purge(/.*) {
+        allow 127.0.0.1;
+        deny all;
+        proxy_cache_purge cache_one $host$request_uri$is_args$args;
+    }
+
+    # 宝塔「禁止访问的敏感文件」规则会拦截 CHANGELOG，精确匹配优先于正则，用它放行更新日志页
+    location = /changelog {
+        proxy_pass http://127.0.0.1:22341;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://o.alicdn.com https://g.alicdn.com; style-src 'self' 'unsafe-inline' https://g.alicdn.com; img-src 'self' data: blob: https://*.alicdn.com https://*.aliyuncs.com; font-src 'self' data: https://g.alicdn.com; connect-src 'self' data: https://*.aliyuncs.com; frame-src https://*.alicdn.com https://*.aliyuncs.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" always;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:22341;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        # 真实客户端 IP（限流与日志用）；不要用 $proxy_add_x_forwarded_for，它会带上客户端伪造的值
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 30s;
+        proxy_read_timeout 600s;
+        proxy_send_timeout 600s;
+        # 后台上传安装包：与 .env 的 MAX_UPLOAD_MB 一致，不缓冲
+        client_max_body_size 1024m;
+        proxy_request_buffering off;
+        add_header X-Cache $upstream_cache_status;
+        add_header Alt-Svc 'h3=":443"; ma=86400';
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://o.alicdn.com https://g.alicdn.com; style-src 'self' 'unsafe-inline' https://g.alicdn.com; img-src 'self' data: blob: https://*.alicdn.com https://*.aliyuncs.com; font-src 'self' data: https://g.alicdn.com; connect-src 'self' data: https://*.aliyuncs.com; frame-src https://*.alicdn.com https://*.aliyuncs.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" always;
+    }
+    # HTTP反向代理相关配置结束 <<<
 ```
 
-### Content-Security-Policy
+要点：
 
-其它安全响应头（HSTS、Permissions-Policy、COOP、CORP、X-Frame-Options 等）由程序自己输出。CSP 放在 nginx 里，和上面的代理配置写在同一个 `location /` 块里：
-
-```nginx
-add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://o.alicdn.com https://g.alicdn.com; style-src 'self' 'unsafe-inline' https://g.alicdn.com; img-src 'self' data: blob: https://*.alicdn.com https://*.aliyuncs.com; font-src 'self' data: https://g.alicdn.com; connect-src 'self' data: https://*.aliyuncs.com; frame-src https://*.alicdn.com https://*.aliyuncs.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" always;
-```
-
-- `alicdn.com` / `aliyuncs.com` 是阿里云验证码的 SDK、样式、设备检测和校验接口；`connect-src` 里的 `data:` 也是验证码 SDK 需要的，去掉会导致验证码失败。
-- `style-src 'unsafe-inline'` 同样是验证码 SDK 注入样式所需。
-- nginx 的 `add_header` 写在某个 `location` 里时，该 location 不再继承上层的 `add_header`。所以要和其它 `add_header` 放在同一层，并且带上 `always`。
-- 如果为 `/changelog` 单独加过 `location = /changelog { … }`（绕开宝塔禁止访问 CHANGELOG 的规则），这一行也要在那个块里再写一次，否则更新日志页没有 CSP。
+- **响应头分工**：HSTS、Permissions-Policy、COOP、CORP、X-Frame-Options、X-Content-Type-Options、Referrer-Policy 都由程序输出，nginx 里**不要再加 HSTS**，否则会出现两个。CSP 只放在 nginx。
+- **`add_header` 不继承**：一个 `location` 里只要写了任何 `add_header`，就不再继承 `server` 层的 `add_header`。所以 CSP 和 `Alt-Svc` 要在两个 location 里各写一次。server 层宝塔自动加的 HSTS 因此不会生效，可以在 SSL 设置里关掉 HSTS 开关。
+- **CSP 里的阿里云域名**：`alicdn.com` / `aliyuncs.com` 是阿里云验证码的 SDK、样式、设备检测和校验接口。`connect-src` 里的 `data:` 和 `style-src` 里的 `'unsafe-inline'` 也是验证码 SDK 需要的，去掉会导致验证码失败。
+- **不要在宝塔「反向代理」界面里点保存**：它会按模板重新生成这一段，覆盖上面的改动。以后都直接改配置文件。
+- **缓存**：宝塔的代理缓存只会缓存静态文件（`X-Cache: HIT`），动态页面和接口每次都是 `MISS`。静态文件地址带内容哈希（`?v=…`），更新后不用手动清缓存。如果发现页面或 `/api/` 出现 `HIT`，就把缓存关掉。
 - 改完执行 `nginx -t` 检查，再重载。
-
-宝塔默认的反向代理会开启缓存，对本站要**关闭**（站点 → 反向代理 → 编辑 → 关闭缓存）。否则下载接口、版本检测和后台页面都可能被缓存。
 
 ## 5. 验证
 
